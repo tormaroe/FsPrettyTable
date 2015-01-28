@@ -14,37 +14,30 @@ type HorizontalAlignment = Left | Center | Right
 type VerticalAlignment = Top | Middle | Bottom
 type SortDirection = Ascending | Descending
 
-type Style = 
-    {
-        HasBorder : bool  // not implemented
-        HasHeader : bool
-        HeaderStyle : HeaderStyle  // partially implemented
-        HorizontalRules : Rules  // not implemented
-        VerticalRules : Rules  // not implemented
-        HorizontalAlignment : HorizontalAlignment
-        VerticalAlignment : VerticalAlignment // not implemented
-        PaddingWidth : int
-        LeftPaddingWidth : int option  // not implemented
-        RightPaddingWidth : int option  // not implemented
-        VerticalChar : char
-        HorizontalChar : char
-        JunctionChar : char
-    }
+type Style = {
+    HasBorder : bool  // not implemented
+    HasHeader : bool
+    HeaderStyle : HeaderStyle  // partially implemented
+    HorizontalRules : Rules  // not implemented
+    VerticalRules : Rules  // not implemented
+    HorizontalAlignment : HorizontalAlignment
+    VerticalAlignment : VerticalAlignment // not implemented
+    PaddingWidth : int
+    LeftPaddingWidth : int option  // not implemented
+    RightPaddingWidth : int option  // not implemented
+    VerticalChar : char
+    HorizontalChar : char
+    JunctionChar : char }
 
-type Transformation =
-    {
-        SortBy : (string * SortDirection) option
-        OnlyColumns : string list option
-    }
+type Transformation = {
+    SortBy : (string * SortDirection) option
+    OnlyColumns : string list option }
 
-type Table =
-    {
-        (* Data *)
-        Rows : string list list // TODO: REFACTOR, SEPARATE ROWS AND HEADERS
-
-        Style : Style
-        Transformation : Transformation
-    } 
+type Table = {
+    Headers : string list
+    Rows : string list list
+    Style : Style
+    Transformation : Transformation } 
     
 
 

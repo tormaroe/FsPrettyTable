@@ -3,7 +3,7 @@ module internal FsPrettyTable.Core
 
 let defaultTable = 
     { Style = { HasBorder = true
-                HasHeader = true
+                HasHeader = false // until a header is set
                 HeaderStyle = KeepAsIs
                 HorizontalRules = Frame 
                 VerticalRules = All 
@@ -17,25 +17,32 @@ let defaultTable =
                 JunctionChar = '+' }
       Transformation = { SortBy = None
                          OnlyColumns = None }
+      Headers = []
       Rows = [] }
+
+let headerAndRows t =
+    if t.Headers.Length > 0
+    then t.Headers :: t.Rows
+    else t.Rows
 
 type FsPrettyTable.Types.Table with
     member x.FilteredRows =
         // This code was reviewed here:
         // http://codereview.stackexchange.com/questions/78778/
         match x.Transformation.OnlyColumns with
-        | None -> x.Rows
+        | None -> headerAndRows x
         | Some xs -> 
-            let headers = List.head x.Rows |> List.toArray
+            let headers = x.Headers |> List.toArray
             let isIncluded = Array.init (headers.Length)
                                 (fun i -> 
                                     xs |> List.exists 
                                             (fun v -> v = headers.[i]))
-            x.Rows |> List.map 
-                        (fun row ->
-                            row |> List.mapi (fun i v -> (isIncluded.[i], v))
-                                |> List.filter fst
-                                |> List.map snd)
+            headerAndRows x
+            |> List.map 
+                (fun row ->
+                    row |> List.mapi (fun i v -> (isIncluded.[i], v))
+                        |> List.filter fst
+                        |> List.map snd)
 
 let calcPaddingSums t =
     let getPadding f =

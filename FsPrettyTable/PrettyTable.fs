@@ -13,6 +13,9 @@ open FsPrettyTable.Format
 /// Create a new PrettyTable with some data.
 let prettyTable data = { defaultTable with Rows = data }
 
+let withHeaders hs t = { t with Headers = hs
+                                Style = { t.Style with HasHeader = true } }
+
 // ==================================================================
 // Functions to generate output
 // ==================================================================
@@ -96,8 +99,7 @@ type Style = DefaultStyle | PlainColumns | PlainRows | MsWordFriendly
 
 /// Override all other visualization options with a predefined style set.
 let setStyle x t =
-    // TODO: Should probably not override sorting and column filtering
-    let t' = prettyTable t.Rows
+    let t' = { t with Style = defaultTable.Style }
     match x with
     | DefaultStyle -> t'
     | PlainColumns -> t' |> hasBorder false |> leftPaddingWidth 0 |> rightPaddingWidth 8

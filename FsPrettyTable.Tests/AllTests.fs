@@ -12,11 +12,11 @@ let shouldPrint p table =
     |> should equal p
 
 let simpleTable = 
-    [["Header 1"; "Header 2"; "Header 3"]
-     ["Row 1";"123";"abcd"]
+    [["Row 1";"123";"abcd"]
      ["Row 2";"103";"abcd"]
      ["Row 3";"113";"abcd"]]
     |> prettyTable
+    |> withHeaders ["Header 1"; "Header 2"; "Header 3"]
     
 [<Test>]
 let ``Make a simple table with default settings`` ()=
@@ -47,11 +47,11 @@ let ``Only selected columns`` ()=
 
 [<Test>]
 let ``Should expand column width for long values`` ()=
-    [["Header 1"; "Header 2"; "Header 3"]
-     ["Row 1";"123";"abcd"]
+    [["Row 1";"123";"abcd"]
      ["Row 2";"1234567890";"abcd"]
      ["Row 3";"123";"abcd"]]
     |> prettyTable
+    |> withHeaders ["Header 1"; "Header 2"; "Header 3"]
     |> shouldPrint """
 +----------+------------+----------+
 | Header 1 |  Header 2  | Header 3 |
@@ -171,7 +171,6 @@ let ``No header`` ()=
      ["Row 2";"1234567890";"abcd"]
      ["Row 3";"123";"abcd"]]
     |> prettyTable
-    |> hasHeader false
     |> shouldPrint """
 +-------+------------+------+
 | Row 1 |    123     | abcd |
@@ -183,9 +182,9 @@ let ``No header`` ()=
 [<Test>]
 let ``Header styles`` ()=
     let table = 
-        [["the Col one";"col Two";"COL THREE AND FoUR"]
-         ["Row 1";"1234567890";"abcd"]]
+        [["Row 1";"1234567890";"abcd"]]
         |> prettyTable
+        |> withHeaders ["the Col one";"col Two";"COL THREE AND FoUR"]
         
     table
     |> headerStyle LowerCase
