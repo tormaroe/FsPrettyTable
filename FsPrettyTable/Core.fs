@@ -25,31 +25,29 @@ let headerAndRows t =
     then t.Headers :: t.Rows
     else t.Rows
 
+let columnFilter t =
+    match t.Transformation.OnlyColumns with
+    | None -> id
+    | Some xs ->
+        let headers = t.Headers |> List.toArray
+        let isIncluded = Array.init (headers.Length)
+                            (fun i -> xs 
+                                      |> List.exists (fun v -> v = headers.[i]))
+        (fun row ->
+            row |> List.mapi (fun i v -> (isIncluded.[i], v))
+                |> List.filter fst
+                |> List.map snd)
+
 type FsPrettyTable.Types.Table with
-    member x.FilteredRows =
-        // This code was reviewed here:
-        // http://codereview.stackexchange.com/questions/78778/
-        match x.Transformation.OnlyColumns with
-        | None -> headerAndRows x
-        | Some xs -> 
-            let headers = x.Headers |> List.toArray
-            let isIncluded = Array.init (headers.Length)
-                                (fun i -> 
-                                    xs |> List.exists 
-                                            (fun v -> v = headers.[i]))
-            headerAndRows x
-            |> List.map 
-                (fun row ->
-                    row |> List.mapi (fun i v -> (isIncluded.[i], v))
-                        |> List.filter fst
-                        |> List.map snd)
+    member x.FilteredHeaderAndRows = 
+        headerAndRows x |> List.map (columnFilter x)
 
 let calcPaddingSums t =
     let getPadding f =
         match f () with
         | Some i -> i
         | None -> t.Style.PaddingWidth
-    t.FilteredRows
+    t.FilteredHeaderAndRows
     |> List.head
     |> List.map  // Prepared for individual column padding
         (fun _ ->
@@ -59,7 +57,7 @@ let calcPaddingSums t =
 
 let calcColWidth t =
     let paddingSums = calcPaddingSums t
-    let rows = t.FilteredRows
+    let rows = t.FilteredHeaderAndRows
     seq {
         for i in 0 .. (List.length <| List.head rows) - 1 do
             let columnFields = rows 
@@ -84,7 +82,7 @@ let calcCellPadding value width t =
 
 let sortIfNeeded (t:Table) rows =
     let makeSortFieldSelectorBy header =
-        let headers = List.head t.FilteredRows
+        let headers = List.head t.FilteredHeaderAndRows
         let index = headers |> List.findIndex (fun x -> x = header)
         (fun row -> List.nth row index)
     match t.Transformation.SortBy with

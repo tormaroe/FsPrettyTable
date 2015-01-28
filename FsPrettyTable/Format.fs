@@ -35,7 +35,7 @@ let doHeaderStyle t row =
     row |> List.map f
 
 let sprintTable' (t:Table) =
-    let rows = t.FilteredRows
+    let rows = t.FilteredHeaderAndRows
     let colWidths = calcColWidth t
     let hr = sprintHorizontalRule colWidths t.Style
     let sprintRow' = sprintRow colWidths t.Style
