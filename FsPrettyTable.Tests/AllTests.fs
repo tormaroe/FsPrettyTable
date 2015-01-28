@@ -217,3 +217,53 @@ let ``MS Word friendly (no horizontal rules)`` ()=
 |  Row 2   |   103    |   abcd   |
 |  Row 3   |   113    |   abcd   |
 """
+
+[<Test>]
+let ``PlainRows style (no vertical rules)`` ()=
+    simpleTable
+    |> setStyle PlainRows
+    |> shouldPrint """
+----------------------------------
+  Header 1   Header 2   Header 3  
+----------------------------------
+   Row 1       123        abcd    
+   Row 2       103        abcd    
+   Row 3       113        abcd    
+----------------------------------
+"""
+
+[<Test>]
+let ``No rules (but border)`` ()=
+    simpleTable
+    |> horizontalRules NoRules
+    |> verticalRules NoRules
+    |> shouldPrint """
+  Header 1   Header 2   Header 3  
+   Row 1       123        abcd    
+   Row 2       103        abcd    
+   Row 3       113        abcd    
+"""
+
+[<Test>]
+let ``No border and custom padding`` ()=
+    simpleTable
+    |> hasBorder false
+    |> paddingWidth 0
+    |> rightPaddingWidth 1
+    |> shouldPrint """
+Header 1 Header 2 Header 3 
+ Row 1     123      abcd   
+ Row 2     103      abcd   
+ Row 3     113      abcd   
+"""
+
+[<Test>]
+let ``Plain columns style (uses left and right padding)`` ()=
+    simpleTable
+    |> setStyle PlainColumns
+    |> shouldPrint """
+Header 1        Header 2        Header 3        
+ Row 1            123             abcd          
+ Row 2            103             abcd          
+ Row 3            113             abcd          
+"""

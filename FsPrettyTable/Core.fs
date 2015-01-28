@@ -70,15 +70,17 @@ let calcColWidth t =
     |> Seq.map2 (+) paddingSums
     |> List.ofSeq
 
-let calcCellPadding value width t =
-    let space = width - String.length value
+let calcCellPadding value width s = // TODO: Restrict padding logic to this function!
+    let lRes, rRes = (if s.LeftPaddingWidth.IsSome then Option.get s.LeftPaddingWidth else s.PaddingWidth),
+                     (if s.RightPaddingWidth.IsSome then Option.get s.RightPaddingWidth else s.PaddingWidth)
+    let space = width - (lRes + rRes) - String.length value
     let lPad = 
-        match t.HorizontalAlignment with
+        match s.HorizontalAlignment with
         | Center -> space / 2
-        | Left -> 1
-        | Right -> space - 1
+        | Left -> 0
+        | Right -> space
     let rPad = space - lPad
-    (lPad, rPad)
+    (lPad + lRes, rPad + rRes)
 
 let sortIfNeeded (t:Table) rows =
     let makeSortFieldSelectorBy header =

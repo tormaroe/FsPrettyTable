@@ -97,9 +97,12 @@ let sortByNone t =
 /// Predefined style sets
 type Style = DefaultStyle | PlainColumns | PlainRows | MsWordFriendly
 
+// TODO: Add Random style, just for fun
+
 /// Override all other visualization options with a predefined style set.
 let setStyle x t =
-    let t' = { t with Style = defaultTable.Style }
+    // Not nice that I have to keep track of HasHeader like this...
+    let t' = { t with Style = { defaultTable.Style with HasHeader = t.Style.HasHeader } }
     match x with
     | DefaultStyle -> t'
     | PlainColumns -> t' |> hasBorder false |> leftPaddingWidth 0 |> rightPaddingWidth 8

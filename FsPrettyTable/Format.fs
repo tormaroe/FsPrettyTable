@@ -14,16 +14,17 @@ let sprintHorizontalRule ws t =
     |> (List.concat >> charsToString)
     |> sappend junction
 
-let sprintRow ws t row =
+let sprintRow ws s row =
+    let vertical = if s.HasBorder then (string s.VerticalChar) else ""
     let f value width =
-        let lPad, rPad = calcCellPadding value width t
-        (string t.VerticalChar) 
+        let lPad, rPad = calcCellPadding value width s
+        vertical
         + (sreplicate lPad ' ') 
         + value 
         + (sreplicate rPad ' ') 
     List.map2 f row ws
     |> strJoin ""
-    |> sappend (string t.VerticalChar)
+    |> sappend vertical
 
 let doHeaderStyle t row =
     let f = 
@@ -43,6 +44,10 @@ let appendHorizontalRule (hr:string) s (sb:StringBuilder) =
     else sb
 
 let sprintTable' (t:Table) =
+    let t = if t.Style.VerticalRules = NoRules 
+            then { t with Style = { t.Style with JunctionChar = '-'
+                                                 VerticalChar = ' ' } }
+            else t
     let rows = t.FilteredHeaderAndRows
     let colWidths = calcColWidth t
     let hr = (sprintHorizontalRule colWidths t.Style) + newline
