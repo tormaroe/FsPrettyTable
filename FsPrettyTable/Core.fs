@@ -2,28 +2,28 @@
 module internal FsPrettyTable.Core
 
 let defaultTable = 
-    { HasBorder = true
-      HasHeader = true
-      HeaderStyle = KeepAsIs
-      HorizontalRules = Frame 
-      VerticalRules = All 
-      HorizontalAlignment = Center
-      VerticalAlignment = Top
-      PaddingWidth = 1
-      LeftPaddingWidth = None
-      RightPaddingWidth = None
-      VerticalChar = '|'
-      HorizontalChar = '-'
-      JunctionChar = '+'
-      SortBy = None
-      OnlyColumns = None
+    { Style = { HasBorder = true
+                HasHeader = true
+                HeaderStyle = KeepAsIs
+                HorizontalRules = Frame 
+                VerticalRules = All 
+                HorizontalAlignment = Center
+                VerticalAlignment = Top
+                PaddingWidth = 1
+                LeftPaddingWidth = None
+                RightPaddingWidth = None
+                VerticalChar = '|'
+                HorizontalChar = '-'
+                JunctionChar = '+' }
+      Transformation = { SortBy = None
+                         OnlyColumns = None }
       Rows = [] }
 
 type FsPrettyTable.Types.Table with
     member x.FilteredRows =
         // This code was reviewed here:
         // http://codereview.stackexchange.com/questions/78778/
-        match x.OnlyColumns with
+        match x.Transformation.OnlyColumns with
         | None -> x.Rows
         | Some xs -> 
             let headers = List.head x.Rows |> List.toArray
@@ -41,14 +41,14 @@ let calcPaddingSums t =
     let getPadding f =
         match f () with
         | Some i -> i
-        | None -> t.PaddingWidth
+        | None -> t.Style.PaddingWidth
     t.FilteredRows
     |> List.head
     |> List.map  // Prepared for individual column padding
         (fun _ ->
-            (getPadding (fun () -> t.LeftPaddingWidth))
+            (getPadding (fun () -> t.Style.LeftPaddingWidth))
             +
-            (getPadding (fun () -> t.RightPaddingWidth)))
+            (getPadding (fun () -> t.Style.RightPaddingWidth)))
 
 let calcColWidth t =
     let paddingSums = calcPaddingSums t
@@ -80,7 +80,7 @@ let sortIfNeeded (t:Table) rows =
         let headers = List.head t.FilteredRows
         let index = headers |> List.findIndex (fun x -> x = header)
         (fun row -> List.nth row index)
-    match t.SortBy with
+    match t.Transformation.SortBy with
     | None -> rows
     | Some (field, direction) ->
         let fieldSelector = makeSortFieldSelectorBy field

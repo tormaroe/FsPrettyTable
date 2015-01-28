@@ -14,12 +14,8 @@ type HorizontalAlignment = Left | Center | Right
 type VerticalAlignment = Top | Middle | Bottom
 type SortDirection = Ascending | Descending
 
-type Table = // TODO: Make some contained types for grouping: Data, Visualization, Transformation
+type Style = 
     {
-        (* Data *)
-        Rows : string list list // TODO: REFACTOR, SEPARATE ROWS AND HEADERS
-
-        (* Visualization *)
         HasBorder : bool  // not implemented
         HasHeader : bool
         HeaderStyle : HeaderStyle  // partially implemented
@@ -33,10 +29,21 @@ type Table = // TODO: Make some contained types for grouping: Data, Visualizatio
         VerticalChar : char
         HorizontalChar : char
         JunctionChar : char
+    }
 
-        (* Transformation *)
+type Transformation =
+    {
         SortBy : (string * SortDirection) option
         OnlyColumns : string list option
+    }
+
+type Table =
+    {
+        (* Data *)
+        Rows : string list list // TODO: REFACTOR, SEPARATE ROWS AND HEADERS
+
+        Style : Style
+        Transformation : Transformation
     } 
     
 

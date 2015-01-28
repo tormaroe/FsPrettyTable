@@ -37,13 +37,13 @@ let doHeaderStyle t row =
 let sprintTable' (t:Table) =
     let rows = t.FilteredRows
     let colWidths = calcColWidth t
-    let hr = sprintHorizontalRule colWidths t
-    let sprintRow' = sprintRow colWidths t
-    let header = [hr; (doHeaderStyle t >> sprintRow') (List.head rows); hr]
-    if t.HasHeader then List.tail rows else rows
+    let hr = sprintHorizontalRule colWidths t.Style
+    let sprintRow' = sprintRow colWidths t.Style
+    let header = [hr; (doHeaderStyle t.Style >> sprintRow') (List.head rows); hr]
+    if t.Style.HasHeader then List.tail rows else rows
     |> sortIfNeeded t
     |> List.map sprintRow'
-    |> if t.HasHeader 
+    |> if t.Style.HasHeader 
        then List.append header 
        else List.append [hr]
     |> strJoin newline
