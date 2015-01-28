@@ -4,6 +4,7 @@ module internal FsPrettyTable.Format
 open System.Text
 open FsPrettyTable.Core
 open FsPrettyTable.StringHelpers
+open FsPrettyTable.TitleCase
 
 let sprintHorizontalRule ws t =
     let junction = string t.JunctionChar
@@ -31,8 +32,8 @@ let doHeaderStyle t row =
         match t.HeaderStyle with
         | LowerCase -> (fun (x:string) -> x.ToLower())
         | UpperCase -> (fun (x:string) -> x.ToUpper())
-        | TitleCase -> id  // Not implemented
-        | Capitalise -> id // Not implemented
+        | TitleCase -> titleCase
+        | Capitalise -> cap
         | KeepAsIs -> id
     row |> List.map f
 

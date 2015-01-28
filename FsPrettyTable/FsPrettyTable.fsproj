@@ -44,6 +44,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="Core.fs" />
     <Compile Include="StringHelpers.fs" />
+    <Compile Include="TitleCase.fs" />
     <Compile Include="Format.fs" />
     <Compile Include="PrettyTable.fs" />
     <None Include="Script.fsx" />
