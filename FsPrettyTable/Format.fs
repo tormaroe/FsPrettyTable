@@ -1,6 +1,7 @@
 ﻿/// Output formatting 
 module internal FsPrettyTable.Format
 
+open System.Text
 open FsPrettyTable.Core
 open FsPrettyTable.StringHelpers
 
@@ -34,20 +35,31 @@ let doHeaderStyle t row =
         | KeepAsIs -> id
     row |> List.map f
 
+let appendSB (x:string) (sb:StringBuilder) = sb.Append x
+
+let appendHorizontalRule (hr:string) s (sb:StringBuilder) =
+    if s.HasBorder && s.HorizontalRules <> NoRules 
+    then sb.Append hr
+    else sb
+
 let sprintTable' (t:Table) =
     let rows = t.FilteredHeaderAndRows
     let colWidths = calcColWidth t
-    let hr = sprintHorizontalRule colWidths t.Style
+    let hr = (sprintHorizontalRule colWidths t.Style) + newline
     let sprintRow' = sprintRow colWidths t.Style
-    let header = [hr; (doHeaderStyle t.Style >> sprintRow') (List.head rows); hr]
-    if t.Style.HasHeader then List.tail rows else rows
-    |> sortIfNeeded t
-    |> List.map sprintRow'
-    |> if t.Style.HasHeader 
-       then List.append header 
-       else List.append [hr]
-    |> strJoin newline
-    |> sappend newline
-    |> sappend hr
-    |> sappend newline
+    let header = (doHeaderStyle t.Style >> sprintRow') (List.head rows)
+                 + newline
+    let data = if t.Style.HasHeader then List.tail rows else rows
+               |> sortIfNeeded t
+               |> List.map sprintRow'
+
+    new StringBuilder ()
+    |> if t.Style.HasHeader then appendHorizontalRule hr t.Style else id
+    |> if t.Style.HasHeader then appendSB header else id
+    |> appendHorizontalRule hr t.Style
+    |> appendSB (data |> strJoin newline)
+    |> appendSB newline
+    |> appendHorizontalRule hr t.Style
+    |> toString
+
 

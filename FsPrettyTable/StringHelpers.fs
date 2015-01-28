@@ -1,6 +1,8 @@
 ﻿/// Some general helper functions dealing with strings
 module internal FsPrettyTable.StringHelpers
 
+let toString (x:System.Object) = x.ToString ()
+
 let charsToString (cs:char list) =
     System.String.Join ( "", Array.ofList cs )
 

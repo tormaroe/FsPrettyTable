@@ -206,3 +206,14 @@ let ``Header styles`` ()=
 """
     // TODO: TitleCase
     // TODO: Capitilize
+
+[<Test>]
+let ``MS Word friendly (no horizontal rules)`` ()=
+    simpleTable
+    |> setStyle MsWordFriendly
+    |> shouldPrint """
+| Header 1 | Header 2 | Header 3 |
+|  Row 1   |   123    |   abcd   |
+|  Row 2   |   103    |   abcd   |
+|  Row 3   |   113    |   abcd   |
+"""
