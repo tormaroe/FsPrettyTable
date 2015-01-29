@@ -1,7 +1,5 @@
 ﻿module FsPrettyTable.TitleCase
 
-open FsPrettyTable.StringHelpers
-
 (*
     This module implements function `titleCase` which will transform any string
     of English text to Title Case. It may not be linguistically correct in all
@@ -26,6 +24,9 @@ open FsPrettyTable.StringHelpers
     http://www.grammar-monster.com/lessons/prepositions.htm
 *)
 
+open System.Text.RegularExpressions
+open FsPrettyTable.StringHelpers
+
 let private exeptionalWords =
     [ 
         // Articles:
@@ -48,6 +49,10 @@ let private exeptionalWords =
         "up"; "upon"; "with"; "within"
     ]
     
+let private exceptional (x:string) =
+    let p = (toLower >> (=)) x
+    List.exists p exeptionalWords
+
 let internal cap (x:string) =
     x.Substring(0, 1).ToUpper() + x.Substring(1).ToLower()
 
@@ -56,13 +61,20 @@ let internal cap (x:string) =
 let private tokenize (x:string) =
     x.Split [|' ';'\n';'\t'|]
 
+let mixedCase (x:string) =
+    match x.Length with
+    | 0 | 1 -> false
+    | _ -> let tail = x.Substring(1)
+           Regex.IsMatch(x, "[a-z]+")
+           && Regex.IsMatch(x, "[A-Z]+")
+
 let titleCase x =
     tokenize x
     |> Array.mapi
         (fun i w ->
-            if i = 0 then cap w
-            elif List.exists ((=) (w.ToLower())) exeptionalWords
-            then w.ToLower()
+            if mixedCase w then w
+            elif i = 0 then cap w
+            elif exceptional w then w.ToLower()
             else cap w )
     |> strJoinArr " "
      

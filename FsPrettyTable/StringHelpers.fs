@@ -19,3 +19,5 @@ let sreplicate n x =
 let newline = System.Environment.NewLine
 
 let sappend x y : string = y + x
+
+let toLower (x:string) = x.ToLower()

@@ -272,9 +272,10 @@ Header 1        Header 2        Header 3
 let ``Title case test`` ()=
     let title = FsPrettyTable.TitleCase.titleCase
     title "war and peace" |> should equal "War and Peace"
-    title "war AND pEaCe" |> should equal "War and Peace"
+    title "war AND PEACE" |> should equal "War and Peace"
     title "a duck and a dog" |> should equal "A Duck and a Dog"
-
+    title "a duck and its dog-walker!" |> should equal "A Duck and Its Dog-walker!"
+    title "McDonalds" |> should equal "McDonalds"
 
 
 // TODO: Multiline values (and alignment)
