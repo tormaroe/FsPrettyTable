@@ -60,6 +60,21 @@ let ``Only selected columns by indexes`` ()=
 """
 
 [<Test>]
+let ``Only selected columns by indexes when no headers`` ()=
+    [["Row 1";"123";"abcd"]
+     ["Row 2";"1234567890";"abcd"]
+     ["Row 3";"123";"abcd"]]
+    |> prettyTable
+    |> onlyColumnsByIndex [0; 1]
+    |> shouldPrint """
++-------+------------+
+| Row 1 |    123     |
+| Row 2 | 1234567890 |
+| Row 3 |    123     |
++-------+------------+
+"""
+
+[<Test>]
 let ``Only selected columns by predicate`` ()=
     simpleTable
     |> onlyColumnsByChoice (fun index header -> 

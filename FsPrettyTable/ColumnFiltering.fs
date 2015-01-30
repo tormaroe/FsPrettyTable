@@ -17,7 +17,7 @@ let columnFilter t =
         filter <| Array.init (headers.Length) 
                     (fun i -> f i headers.[i])
     | Some (OnlyColumnIndexes is) ->
-        filter <| Array.init (List.length t.Headers) 
+        filter <| Array.init (List.length (List.head t.Rows)) 
                     (fun i -> is |> List.exists ((=) i))
     | Some (OnlyColumnHeaders xs) ->
         let headers = t.Headers |> List.toArray
