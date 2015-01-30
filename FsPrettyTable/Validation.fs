@@ -6,9 +6,24 @@ type ValidationResult =
     | Valid
     | Invalid of string list
 
-let private invalid = function
+let private invalidUnless reason b =
+    if b then Valid else Invalid [reason]
+
+let private isInvalid = function
     | Valid -> false
     | Invalid _ -> true
+
+let private ``Empty table`` t =
+    (List.length t.Rows > 0 || List.length (List.head t.Rows) > 0)
+    |> invalidUnless "An empty table is no table"
+
+let private ``Different row length`` t =
+    let baseline = List.head t.Rows |> List.length
+    if t.Headers.Length > 0 then t.Headers :: t.Rows else t.Rows
+    |> List.map List.length
+    |> List.forall ((=) baseline)
+    |> invalidUnless 
+        "All rows (including header if added) must be of same length"
 
 let private ``Invalid filter when no headers`` t =
     let filter = t.Transformation.OnlyColumns
@@ -33,12 +48,16 @@ let private ``Invalid index in filter`` t =
                    |> Invalid
     | _ -> Valid
 
+// TODO: Many additional validations can be added...
+
 let validate t =
     let invalids =
-        [ ``Invalid filter when no headers``
+        [ ``Empty table``
+          ``Different row length``
+          ``Invalid filter when no headers``
           ``Invalid index in filter`` ]
         |> List.map (fun v -> v t)
-        |> List.filter invalid
+        |> List.filter isInvalid
     if invalids.Length = 0
     then Valid
     else
