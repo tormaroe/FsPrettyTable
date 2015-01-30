@@ -289,7 +289,7 @@ You may filter column output based on the column headers. This requires that you
     |   LISP   |    1958     |
     ...
 
-You may also specify filtering by column index:
+You may also specify filtering by column index. This is what you'll have to use if you have a table with no headers:
 
     myTable |> onlyColumnsByIndex [0; 2]
 
@@ -331,6 +331,8 @@ Remember that all values are strings, and will be sorted as such.
 ## API
 
 Pre version 1.0 the API may change.
+
+*TODO: Add info about validation*
 
 ### Module PrettyTable
 

@@ -47,6 +47,7 @@
     <Compile Include="Sorting.fs" />
     <Compile Include="StringHelpers.fs" />
     <Compile Include="TitleCase.fs" />
+    <Compile Include="Validation.fs" />
     <Compile Include="Format.fs" />
     <Compile Include="PrettyTable.fs" />
   </ItemGroup>

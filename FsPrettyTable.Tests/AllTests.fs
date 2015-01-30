@@ -338,6 +338,37 @@ let ``Title case test`` ()=
     title "a duck and its dog-walker!" |> should equal "A Duck and Its Dog-walker!"
     title "McDonalds" |> should equal "McDonalds"
 
+[<Test>]
+let ``Validation canary test`` ()=
+    [["Row 1";"123";"abcd"]
+     ["Row 2";"1234567890";"abcd"]
+     ["Row 3";"123";"abcd"]]
+    |> prettyTable
+    |> onlyColumnsByIndex [-1; 0; 1; 3]
+    |> FsPrettyTable.Validation.validate
+    |> should equal 
+        (FsPrettyTable.Validation.Invalid 
+            ["-1 in column filter is not a valid column index"
+             "3 in column filter is not a valid column index"])
+
+             
+[<Test>]
+let ``Validation error canary test`` ()=
+    try
+        [["Row 1";"123";"abcd"]
+         ["Row 2";"1234567890";"abcd"]
+         ["Row 3";"123";"abcd"]]
+        |> prettyTable
+        |> onlyColumnsByIndex [-1; 0; 1; 3]
+        |> sprintTable
+        |> ignore
+        Assert.Fail "Validation should throw"
+    with
+    | FsPrettyTable.Validation.ValidationError(xs) ->
+        xs |> should equal   
+                ["-1 in column filter is not a valid column index"
+                 "3 in column filter is not a valid column index"]
+
 
 // TODO: Multiline values (and alignment)
 

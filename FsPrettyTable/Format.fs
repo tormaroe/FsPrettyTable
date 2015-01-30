@@ -7,6 +7,7 @@ open FsPrettyTable.ColumnFiltering
 open FsPrettyTable.Core
 open FsPrettyTable.StringHelpers
 open FsPrettyTable.TitleCase
+open FsPrettyTable.Validation
 
 let sprintHorizontalRule ws t =
     let junction = string t.JunctionChar
@@ -48,6 +49,7 @@ let appendHorizontalRule (hr:string) s (sb:StringBuilder) =
     else sb
 
 let sprintTable' (t:Table) =
+    failIfNotValid t
     let t = if t.Style.VerticalRules = NoRules 
             then { t with Style = { t.Style with JunctionChar = '-'
                                                  VerticalChar = ' ' } }
