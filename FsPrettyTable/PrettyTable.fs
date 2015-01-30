@@ -13,6 +13,7 @@ open FsPrettyTable.Format
 /// Create a new PrettyTable with some data.
 let prettyTable data = { defaultTable with Rows = data }
 
+/// Set headers
 let withHeaders hs t = { t with Headers = hs
                                 Style = { t.Style with HasHeader = true } }
 
@@ -77,25 +78,32 @@ let horizontalAlignmentForColumn c a t =
 // Functions to specify data transformations
 // ==================================================================
 
+let private onlyColumns' x t =
+    { t with Transformation = { t.Transformation with OnlyColumns = x } }
+
 /// Accepts a set of headers. Output columns will be restricted to these columns.
-let onlyColumns xs t = 
-    { t with Transformation = { t.Transformation with OnlyColumns = Some xs } }
+let onlyColumns xs = onlyColumns' <| Some (OnlyColumnHeaders xs)
+
+/// ...
+let onlyColumnsByIndex xs = onlyColumns' <| Some (OnlyColumnIndexes xs)
+
+/// ...
+let onlyColumnsByChoice f = onlyColumns' <| Some (OnlyColumnChoice f)
 
 /// All data columns will be included in output.
-let allColumns t = 
-    { t with Transformation = { t.Transformation with OnlyColumns = None } }
+let allColumns = onlyColumns' None
+
+let private sortBy' x t =
+    { t with Transformation = { t.Transformation with SortBy = x } }
 
 /// Sort my a particular field (specified by header value) in ascending order.
-let sortBy field t = 
-    { t with Transformation = { t.Transformation with SortBy = Some (field, Ascending) } }
+let sortBy field = sortBy' <| Some (SortByHeader (field, Ascending))
 
 /// Sort my a particular field (specified by header value) in descending order.
-let sortByDescending field t = 
-    { t with Transformation = { t.Transformation with SortBy = Some (field, Descending) } }
+let sortByDescending field = sortBy' <| Some (SortByHeader (field, Descending))
 
 /// Clear any previsoudly set sorting order.
-let sortByNone t = 
-    { t with Transformation = { t.Transformation with SortBy = None } }
+let sortByNone = sortBy' None
 
 // ==================================================================
 // Predefined table styles

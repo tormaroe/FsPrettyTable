@@ -2,6 +2,8 @@
 module internal FsPrettyTable.Format
 
 open System.Text
+open FsPrettyTable
+open FsPrettyTable.ColumnFiltering
 open FsPrettyTable.Core
 open FsPrettyTable.StringHelpers
 open FsPrettyTable.TitleCase
@@ -57,7 +59,7 @@ let sprintTable' (t:Table) =
     let header = (doHeaderStyle t.Style >> sprintRow') (List.head rows)
                  + newline
     let data = if t.Style.HasHeader then List.tail rows else rows
-               |> sortIfNeeded t
+               |> Sorting.sortIfNeeded t
                |> List.map sprintRow'
 
     new StringBuilder ()

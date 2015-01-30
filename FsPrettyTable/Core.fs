@@ -1,6 +1,8 @@
 ﻿/// Core logic
 module internal FsPrettyTable.Core
 
+open FsPrettyTable.ColumnFiltering
+
 let defaultTable = 
     { Style = { HasBorder = true
                 HasHeader = false // .. until a header is set
@@ -20,28 +22,6 @@ let defaultTable =
                          OnlyColumns = None }
       Headers = []
       Rows = [] }
-
-let headerAndRows t =
-    if t.Headers.Length > 0
-    then t.Headers :: t.Rows
-    else t.Rows
-
-let columnFilter t =
-    match t.Transformation.OnlyColumns with
-    | None -> id
-    | Some xs ->
-        let headers = t.Headers |> List.toArray
-        let isIncluded = Array.init (headers.Length)
-                            (fun i -> xs 
-                                      |> List.exists (fun v -> v = headers.[i]))
-        (fun row ->
-            row |> List.mapi (fun i v -> (isIncluded.[i], v))
-                |> List.filter fst
-                |> List.map snd)
-
-type FsPrettyTable.Types.Table with
-    member x.FilteredHeaderAndRows = 
-        headerAndRows x |> List.map (columnFilter x)
 
 let calcPaddingSums t =
     let getPadding f =
@@ -95,17 +75,3 @@ let calcCellPadding index value width t = // TODO: Restrict padding logic to thi
     let rPad = space - lPad
     (lPad + lRes, rPad + rRes)
 
-let sortIfNeeded (t:Table) rows =
-    let makeSortFieldSelectorBy header =
-        let headers = List.head t.FilteredHeaderAndRows
-        let index = headers |> List.findIndex (fun x -> x = header)
-        (fun row -> List.nth row index)
-    match t.Transformation.SortBy with
-    | None -> rows
-    | Some (field, direction) ->
-        let fieldSelector = makeSortFieldSelectorBy field
-        rows
-        |> List.sortBy fieldSelector
-        |> if direction = Ascending
-           then id
-           else List.rev

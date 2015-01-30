@@ -24,9 +24,18 @@ type Style = {
     HorizontalChar : char
     JunctionChar : char }
 
+type ColumnFilter =
+    | OnlyColumnHeaders of string list
+    | OnlyColumnIndexes of int list 
+    | OnlyColumnChoice of (int -> string -> bool)
+
+type SortBy =
+    | SortByHeader of string * SortDirection
+    | SortByIndex of int * SortDirection
+
 type Transformation = {
-    SortBy : (string * SortDirection) option
-    OnlyColumns : string list option }
+    SortBy : SortBy option
+    OnlyColumns : ColumnFilter option }
 
 type Table = {
     Headers : string list

@@ -46,6 +46,35 @@ let ``Only selected columns`` ()=
 """
 
 [<Test>]
+let ``Only selected columns by indexes`` ()=
+    simpleTable
+    |> onlyColumnsByIndex [0; 2]
+    |> shouldPrint """
++----------+----------+
+| Header 1 | Header 3 |
++----------+----------+
+|  Row 1   |   abcd   |
+|  Row 2   |   abcd   |
+|  Row 3   |   abcd   |
++----------+----------+
+"""
+
+[<Test>]
+let ``Only selected columns by predicate`` ()=
+    simpleTable
+    |> onlyColumnsByChoice (fun index header -> 
+                                index = 0 || header = "Header 3")
+    |> shouldPrint """
++----------+----------+
+| Header 1 | Header 3 |
++----------+----------+
+|  Row 1   |   abcd   |
+|  Row 2   |   abcd   |
+|  Row 3   |   abcd   |
++----------+----------+
+"""
+
+[<Test>]
 let ``Should expand column width for long values`` ()=
     [["Row 1";"123";"abcd"]
      ["Row 2";"1234567890";"abcd"]
@@ -297,3 +326,8 @@ let ``Title case test`` ()=
 
 // TODO: Multiline values (and alignment)
 
+// TODO: Add markdown support
+// https://help.github.com/articles/github-flavored-markdown/
+// Need alignment indicators
+
+// TODO: add `top` function
