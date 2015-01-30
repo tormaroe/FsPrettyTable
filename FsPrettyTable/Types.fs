@@ -3,28 +3,23 @@
 module FsPrettyTable.Types
 
 type HeaderStyle = Capitalise | TitleCase | UpperCase | LowerCase | KeepAsIs
-
-(*
-TITLE CASE: http://www.grammar-monster.com/lessons/capital_letters_title_case.htm
-Must implement algo. for this.
-*)
-
 type Rules = Frame | All | NoRules
 type HorizontalAlignment = Left | Center | Right
 type VerticalAlignment = Top | Middle | Bottom
 type SortDirection = Ascending | Descending
 
 type Style = {
-    HasBorder : bool  // not implemented
+    HasBorder : bool
     HasHeader : bool
     HeaderStyle : HeaderStyle  // partially implemented
-    HorizontalRules : Rules  // not implemented
-    VerticalRules : Rules  // not implemented
+    HorizontalRules : Rules
+    VerticalRules : Rules
     HorizontalAlignment : HorizontalAlignment
     VerticalAlignment : VerticalAlignment // not implemented
+    PerColumnHorizontalAlignment : (string * HorizontalAlignment) list
     PaddingWidth : int
-    LeftPaddingWidth : int option  // not implemented
-    RightPaddingWidth : int option  // not implemented
+    LeftPaddingWidth : int option
+    RightPaddingWidth : int option
     VerticalChar : char
     HorizontalChar : char
     JunctionChar : char }
@@ -39,5 +34,3 @@ type Table = {
     Style : Style
     Transformation : Transformation } 
     
-
-

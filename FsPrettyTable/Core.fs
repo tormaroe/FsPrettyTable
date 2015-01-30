@@ -3,12 +3,13 @@ module internal FsPrettyTable.Core
 
 let defaultTable = 
     { Style = { HasBorder = true
-                HasHeader = false // until a header is set
+                HasHeader = false // .. until a header is set
                 HeaderStyle = KeepAsIs
                 HorizontalRules = Frame 
                 VerticalRules = All 
                 HorizontalAlignment = Center
                 VerticalAlignment = Top
+                PerColumnHorizontalAlignment = []
                 PaddingWidth = 1
                 LeftPaddingWidth = None
                 RightPaddingWidth = None
@@ -70,12 +71,24 @@ let calcColWidth t =
     |> Seq.map2 (+) paddingSums
     |> List.ofSeq
 
-let calcCellPadding value width s = // TODO: Restrict padding logic to this function!
+let calcHorizontalAlignmentForColumn index t =
+    let headerForIndex i = List.nth t.Headers index
+    let alignOverride header = t.Style.PerColumnHorizontalAlignment
+                               |> List.tryFind (fun (c,a) -> c = header)
+    match t.Style.HasHeader with
+    | false -> t.Style.HorizontalAlignment
+    | true -> 
+        match headerForIndex index |> alignOverride with
+        | None -> t.Style.HorizontalAlignment
+        | Some (_,a) -> a
+        
+let calcCellPadding index value width t = // TODO: Restrict padding logic to this function!
+    let s = t.Style
     let lRes, rRes = (if s.LeftPaddingWidth.IsSome then Option.get s.LeftPaddingWidth else s.PaddingWidth),
                      (if s.RightPaddingWidth.IsSome then Option.get s.RightPaddingWidth else s.PaddingWidth)
     let space = width - (lRes + rRes) - String.length value
     let lPad = 
-        match s.HorizontalAlignment with
+        match calcHorizontalAlignmentForColumn index t with
         | Center -> space / 2
         | Left -> 0
         | Right -> space

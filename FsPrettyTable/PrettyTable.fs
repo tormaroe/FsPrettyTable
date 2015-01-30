@@ -66,6 +66,13 @@ let junctionChar c t = { t with Style = { t.Style with JunctionChar = c } }
 /// Specify horizontal alignment (default = Center).
 let horizontalAlignment a t = { t with Style = { t.Style with HorizontalAlignment = a } }
 
+/// Override horizontal alignment for a particular column.
+let horizontalAlignmentForColumn c a t = 
+    { t with 
+        Style = { t.Style with 
+                    PerColumnHorizontalAlignment = 
+                        (c,a) :: t.Style.PerColumnHorizontalAlignment } }
+
 // ==================================================================
 // Functions to specify data transformations
 // ==================================================================

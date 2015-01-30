@@ -24,7 +24,6 @@
     http://www.grammar-monster.com/lessons/prepositions.htm
 *)
 
-open System.Text.RegularExpressions
 open FsPrettyTable.StringHelpers
 
 let private exeptionalWords =
@@ -61,12 +60,13 @@ let internal cap (x:string) =
 let private tokenize (x:string) =
     x.Split [|' ';'\n';'\t'|]
 
+let (<&&>) f g x = f x && g x
+
 let mixedCase (x:string) =
+    let p = regxIsMatch "[a-z]+" <&&> regxIsMatch "[A-Z]+"
     match x.Length with
     | 0 | 1 -> false
-    | _ -> let tail = x.Substring(1)
-           Regex.IsMatch(x, "[a-z]+")
-           && Regex.IsMatch(x, "[A-Z]+")
+    | _ -> p (x.Substring 1)
 
 let titleCase x =
     tokenize x

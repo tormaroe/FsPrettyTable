@@ -268,6 +268,23 @@ Header 1        Header 2        Header 3
  Row 3            113             abcd          
 """
 
+    
+[<Test>]
+let ``Override horizontal alignment for columns`` ()=
+    simpleTable
+    |> horizontalAlignmentForColumn "Header 1" Left
+    |> horizontalAlignmentForColumn "Header 3" Right
+    |> shouldPrint """
++----------+----------+----------+
+| Header 1 | Header 2 | Header 3 |
++----------+----------+----------+
+| Row 1    |   123    |     abcd |
+| Row 2    |   103    |     abcd |
+| Row 3    |   113    |     abcd |
++----------+----------+----------+
+"""
+
+
 [<Test>]
 let ``Title case test`` ()=
     let title = FsPrettyTable.TitleCase.titleCase
