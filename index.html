@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Fsprettytable : Represent tabular data in visually appealing ASCII tables using F#">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Fsprettytable</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/tormaroe/FsPrettyTable">View on GitHub</a>
+
+          <h1 id="project_title">Fsprettytable</h1>
+          <h2 id="project_tagline">Represent tabular data in visually appealing ASCII tables using F#</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/tormaroe/FsPrettyTable/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/tormaroe/FsPrettyTable/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>FsPrettyTable is a simple F# library designed to make it quick and easy to represent tabular data in visually appealing ASCII tables, like this:</p>
+
+<pre><code>+----------+-----------------+-------------+---------------+
+| Language | Developer       | Appeared in | Influenced by |
++----------+-----------------+-------------+---------------+
+| IPL      | RAND Corp.      |    1956     |               |
+| LISP     | John McCarthy   |    1958     |           IPL |
+| ISWIM    | Peter J. Landin |    1966     |          LISP |
+| ML       | Robin Milner    |    1973     |         ISWIM |
+| Caml     | Gérard Huet     |    1985     |            ML |
+| OCaml    | INRIA           |    1996     |          Caml |
+| F#       | M$ / Don Syme   |    2005     |         OCaml |
++----------+-----------------+-------------+---------------+
+</code></pre>
+
+<p>It is more or less a rip off of the <a href="https://code.google.com/p/prettytable/">PrettyTable Python library</a> made by <a href="http://www.luke.maurits.id.au/">Luke Maurits</a>. I hope he doesn't mind.</p>
+
+<p>PrettyTable lets you control many aspects of the table, like the width of the column padding, the alignment of text within columns, which characters are used to draw the table border, whether you even want a border, and much more. You can control which subsets of the columns and rows are printed, and you can sort the rows by the value of a particular column.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p><em>TODO: Add NuGet info once it's published</em></p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Let's begin by defining some data which we would like to display as a table:</p>
+
+<pre><code>open PrettyTable
+let headers = ["Language";"Developer";"Appeared in";"Influenced by"]
+let rows = [["IPL";"RAND Corp.";"1956";""]
+            ["LISP";"John McCarthy";"1958";"IPL"]
+            ["ISWIM";"Peter J. Landin";"1966";"LISP"]
+            ["ML";"Robin Milner";"1973";"ISWIM"]
+            ["Caml";"Gérard Huet";"1985";"ML"]
+            ["OCaml";"INRIA";"1996";"Caml"]
+            ["F#";"M$ / Don Syme";"2005";"OCaml"]]
+</code></pre>
+
+<p>The <code>PrettyTable</code> module provides a bunch of functions which can be chained together to format, manimulate and finally print (or just return as a string). Let's just print it using the default style first:</p>
+
+<pre><code>rows |&gt; prettyTable |&gt; printTable
+
+// Output:
++-------+-----------------+------+-------+
+|  IPL  |   RAND Corp.    | 1956 |       |
+| LISP  |  John McCarthy  | 1958 |  IPL  |
+| ISWIM | Peter J. Landin | 1966 | LISP  |
+|  ML   |  Robin Milner   | 1973 | ISWIM |
+| Caml  |   Gérard Huet   | 1985 |  ML   |
+| OCaml |      INRIA      | 1996 | Caml  |
+|  F#   |  M$ / Don Syme  | 2005 | OCaml |
++-------+-----------------+------+-------+
+</code></pre>
+
+<p>Ok, nice. But where did the headers go? Well, you I need to add then obviously:</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; printTable
+
+// Output:
++----------+-----------------+-------------+---------------+
+| Language |    Developer    | Appeared in | Influenced by |
++----------+-----------------+-------------+---------------+
+|   IPL    |   RAND Corp.    |    1956     |               |
+|   LISP   |  John McCarthy  |    1958     |      IPL      |
+|  ISWIM   | Peter J. Landin |    1966     |     LISP      |
+|    ML    |  Robin Milner   |    1973     |     ISWIM     |
+|   Caml   |   Gérard Huet   |    1985     |      ML       |
+|  OCaml   |      INRIA      |    1996     |     Caml      |
+|    F#    |  M$ / Don Syme  |    2005     |     OCaml     |
++----------+-----------------+-------------+---------------+
+</code></pre>
+
+<p>If you just want the table string representation instead of printing it, use <code>sprintTable</code>.</p>
+
+<h2>
+<a id="changing-the-ascii-properties" class="anchor" href="#changing-the-ascii-properties" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changing the ASCII properties</h2>
+
+<h3>
+<a id="horizontal-and-vertical-rules" class="anchor" href="#horizontal-and-vertical-rules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Horizontal and vertical rules</h3>
+
+<p>You can turn both horizontal and vertical rules on or off individually. Let's try it:</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; verticalRules FsPrettyTable.Types.NoRules
+|&gt; printTable
+
+// Output:
+------------------------------------------------------------
+  Language      Developer      Appeared in   Influenced by  
+------------------------------------------------------------
+    IPL        RAND Corp.         1956                      
+    LISP      John McCarthy       1958            IPL       
+   ISWIM     Peter J. Landin      1966           LISP       
+     ML       Robin Milner        1973           ISWIM      
+    Caml       Gérard Huet        1985            ML        
+   OCaml          INRIA           1996           Caml       
+     F#       M$ / Don Syme       2005           OCaml      
+------------------------------------------------------------
+</code></pre>
+
+<p>That's pretty nice! And the other one:</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; horizontalRules FsPrettyTable.Types.NoRules
+|&gt; printTable
+
+// Output:
+| Language |    Developer    | Appeared in | Influenced by |
+|   IPL    |   RAND Corp.    |    1956     |               |
+|   LISP   |  John McCarthy  |    1958     |      IPL      |
+|  ISWIM   | Peter J. Landin |    1966     |     LISP      |
+|    ML    |  Robin Milner   |    1973     |     ISWIM     |
+|   Caml   |   Gérard Huet   |    1985     |      ML       |
+|  OCaml   |      INRIA      |    1996     |     Caml      |
+|    F#    |  M$ / Don Syme  |    2005     |     OCaml     |
+</code></pre>
+
+<p><em>TODO: Implement difference between <code>FsPrettyTable.Types.Frame</code> and <code>FsPrettyTable.Types.All</code>.</em></p>
+
+<p>What you might actually be looking for is turning all bordering off, and that can be done using <code>hasBorder</code> like so:</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; hasBorder false
+|&gt; printTable
+
+// Output:
+ Language     Developer     Appeared in  Influenced by 
+   IPL       RAND Corp.        1956                    
+   LISP     John McCarthy      1958           IPL      
+  ISWIM    Peter J. Landin     1966          LISP      
+    ML      Robin Milner       1973          ISWIM     
+   Caml      Gérard Huet       1985           ML       
+  OCaml         INRIA          1996          Caml      
+    F#      M$ / Don Syme      2005          OCaml     
+</code></pre>
+
+<h3>
+<a id="horizontal-alignment" class="anchor" href="#horizontal-alignment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Horizontal alignment</h3>
+
+<p>You may align the content of table cells either <code>Left</code>, <code>Right</code>, og <code>Center</code> (default).</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; horizontalAlignment FsPrettyTable.Types.Left
+|&gt; printTable
+
+// Output:
++----------+-----------------+-------------+---------------+
+| Language | Developer       | Appeared in | Influenced by |
++----------+-----------------+-------------+---------------+
+| IPL      | RAND Corp.      | 1956        |               |
+| LISP     | John McCarthy   | 1958        | IPL           |
+| ISWIM    | Peter J. Landin | 1966        | LISP          |
+| ML       | Robin Milner    | 1973        | ISWIM         |
+| Caml     | Gérard Huet     | 1985        | ML            |
+| OCaml    | INRIA           | 1996        | Caml          |
+| F#       | M$ / Don Syme   | 2005        | OCaml         |
++----------+-----------------+-------------+---------------+
+</code></pre>
+
+<p>And then you have the option to override alignment for each column, based on the heading value:</p>
+
+<pre><code>open FsPrettyTable.Types
+
+prettyTable rows
+|&gt; withHeaders headers
+|&gt; horizontalAlignment Left
+|&gt; horizontalAlignmentForColumn "Appeared in" Center
+|&gt; horizontalAlignmentForColumn "Influenced by" Right
+|&gt; printTable
+
+// Output:
++----------+-----------------+-------------+---------------+
+| Language | Developer       | Appeared in | Influenced by |
++----------+-----------------+-------------+---------------+
+| IPL      | RAND Corp.      |    1956     |               |
+| LISP     | John McCarthy   |    1958     |           IPL |
+| ISWIM    | Peter J. Landin |    1966     |          LISP |
+| ML       | Robin Milner    |    1973     |         ISWIM |
+| Caml     | Gérard Huet     |    1985     |            ML |
+| OCaml    | INRIA           |    1996     |          Caml |
+| F#       | M$ / Don Syme   |    2005     |         OCaml |
++----------+-----------------+-------------+---------------+
+</code></pre>
+
+<h3>
+<a id="vertical-alignment" class="anchor" href="#vertical-alignment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vertical alignment</h3>
+
+<p><em>TODO: Implement vertical alignment</em></p>
+
+<h3>
+<a id="padding" class="anchor" href="#padding" aria-hidden="true"><span class="octicon octicon-link"></span></a>Padding</h3>
+
+<p>You may specify the amount of padding using the <code>paddingWidth</code> function. Default padding is <code>1</code>, which adds a single space on either side of the value in a cell. You may also specify padding for the <em>left</em> and <em>right</em> side separately: </p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; hasBorder false
+|&gt; horizontalAlignment Left
+|&gt; horizontalAlignmentForColumn "Appeared in" Center
+|&gt; leftPaddingWidth 0
+|&gt; rightPaddingWidth 4
+|&gt; printTable
+
+// Output:
+Language    Developer          Appeared in    Influenced by    
+IPL         RAND Corp.            1956                         
+LISP        John McCarthy         1958        IPL              
+ISWIM       Peter J. Landin       1966        LISP             
+ML          Robin Milner          1973        ISWIM            
+Caml        Gérard Huet           1985        ML               
+OCaml       INRIA                 1996        Caml             
+F#          M$ / Don Syme         2005        OCaml                       
+</code></pre>
+
+<h3>
+<a id="header-style" class="anchor" href="#header-style" aria-hidden="true"><span class="octicon octicon-link"></span></a>Header style</h3>
+
+<p>The casing style of the headers may be changed using the <code>headerStyle</code> function. Possible values are:</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">KeepAsIs</td>
+<td align="left">Simply leave it as it is. This is default.</td>
+</tr>
+<tr>
+<td align="left">LowerCase</td>
+<td align="left">Turn all letters to lower case.</td>
+</tr>
+<tr>
+<td align="left">UpperCase</td>
+<td align="left">Turn all letters to upper case.</td>
+</tr>
+<tr>
+<td align="left">TitleCase</td>
+<td align="left">An attempt at producing a linguistically correct title case (for English titles). Uses it's own implementation, which is slightly more correct that the default .NET implementation.</td>
+</tr>
+<tr>
+<td align="left">Capitalise</td>
+<td align="left">Simple use upper case for the first letter, lower case for the rest.</td>
+</tr>
+</tbody>
+</table>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; headerStyle FsPrettyTable.Types.UpperCase
+|&gt; printTable
+
+// Output:
++----------+-----------------+-------------+---------------+
+| LANGUAGE |    DEVELOPER    | APPEARED IN | INFLUENCED BY |
++----------+-----------------+-------------+---------------+
+|   IPL    |   RAND Corp.    |    1956     |               |
+|   LISP   |  John McCarthy  |    1958     |      IPL      |
+...
+</code></pre>
+
+<h3>
+<a id="swapping-out-the-separator-characters" class="anchor" href="#swapping-out-the-separator-characters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Swapping out the separator characters</h3>
+
+<p>You can replace the characters used in the border:</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; verticalChar '/'
+|&gt; horizontalChar ' '
+|&gt; junctionChar 'o'
+|&gt; printTable
+
+// Output:
+o          o                 o             o               o
+/ Language /    Developer    / Appeared in / Influenced by /
+o          o                 o             o               o
+/   IPL    /   RAND Corp.    /    1956     /               /
+/   LISP   /  John McCarthy  /    1958     /      IPL      /
+/  ISWIM   / Peter J. Landin /    1966     /     LISP      /
+/    ML    /  Robin Milner   /    1973     /     ISWIM     /
+/   Caml   /   Gérard Huet   /    1985     /      ML       /
+/  OCaml   /      INRIA      /    1996     /     Caml      /
+/    F#    /  M$ / Don Syme  /    2005     /     OCaml     /
+o          o                 o             o               o
+</code></pre>
+
+<h3>
+<a id="predefined-styles" class="anchor" href="#predefined-styles" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predefined styles</h3>
+
+<p>FsPrettyTable comes with some predefined style sets. They are:</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Style</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">DefaultStyle</td>
+<td align="left">By default, FsPrettyTable produces ASCII tables that look like the ones used in SQL database shells. Use this to undo any style changes you may have made.</td>
+</tr>
+<tr>
+<td align="left">PlainColumns</td>
+<td align="left">A borderless style that works well with command line programs for columnar data.</td>
+</tr>
+<tr>
+<td align="left">MsWordFriendly</td>
+<td align="left">A format which works nicely with Microsoft Word's "Convert to table" feature</td>
+</tr>
+<tr>
+<td align="left">PlainRows</td>
+<td align="left">Basically just no vertical rules. I think this looks nice :)</td>
+</tr>
+<tr>
+<td align="left">Markdown</td>
+<td align="left"><em>Not supported yet..</em></td>
+</tr>
+</tbody>
+</table>
+
+<p>This is how you set a style:</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; setStyle MsWordFriendly
+|&gt; printTable
+</code></pre>
+
+<h2>
+<a id="filtering-columns" class="anchor" href="#filtering-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filtering columns</h2>
+
+<p>You may filter column output based on the column headers. This requires that you are actually using headers.</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; onlyColumns ["Language"; "Appeared in"]
+|&gt; printTable
+
+// Output:
++----------+-------------+
+| Language | Appeared in |
++----------+-------------+
+|   IPL    |    1956     |
+|   LISP   |    1958     |
+...
+</code></pre>
+
+<p>You may also specify filtering by column index. This is what you'll have to use if you have a table with no headers:</p>
+
+<pre><code>myTable |&gt; onlyColumnsByIndex [0; 2]
+</code></pre>
+
+<p>or by a predicate function which will be passed both the column index and the header value as arguments:</p>
+
+<pre><code>myTable |&gt; onlyColumnsByChoice
+               (fun i h -&gt; i = 0 || h = "Appeared in")
+</code></pre>
+
+<p>Specifying a column filtering overwrites any previous filtering. To remove the filter, use function <code>allColumns</code>.</p>
+
+<h2>
+<a id="sorting" class="anchor" href="#sorting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sorting</h2>
+
+<p>You may sort the table on a single column, again by specifying the header value. Use <code>sortBy</code> for ascending order or <code>sortByDescending</code> for descending order. Use <code>sortByNone</code> to clear any sorting you have previously added.</p>
+
+<pre><code>prettyTable rows
+|&gt; withHeaders headers
+|&gt; sortByDescending "Appeared in"
+|&gt; printTable
+
+// Output:
++----------+-----------------+-------------+---------------+
+| Language |    Developer    | Appeared in | Influenced by |
++----------+-----------------+-------------+---------------+
+|    F#    |  M$ / Don Syme  |    2005     |     OCaml     |
+|  OCaml   |      INRIA      |    1996     |     Caml      |
+|   Caml   |   Gérard Huet   |    1985     |      ML       |
+|    ML    |  Robin Milner   |    1973     |     ISWIM     |
+|  ISWIM   | Peter J. Landin |    1966     |     LISP      |
+|   LISP   |  John McCarthy  |    1958     |      IPL      |
+|   IPL    |   RAND Corp.    |    1956     |               |
++----------+-----------------+-------------+---------------+
+</code></pre>
+
+<p>Remember that all values are strings, and will be sorted as such.</p>
+
+<p><em>TODO: Specify column using index</em></p>
+
+<p><em>TODO: Specify column using a compare function (takes complete row)</em></p>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
+
+<p>Pre version 1.0 the API may change.</p>
+
+<p><em>TODO: Add info about validation</em></p>
+
+<h3>
+<a id="module-prettytable" class="anchor" href="#module-prettytable" aria-hidden="true"><span class="octicon octicon-link"></span></a>Module PrettyTable</h3>
+
+<pre><code>val prettyTable : string list list -&gt; Table
+val withHeaders : string list -&gt; Table -&gt; Table
+
+val sprintTable : Table -&gt; string
+val printTable : Table -&gt; unit
+
+val hasHeader : bool -&gt; Table -&gt; Table
+val hasBorder : bool -&gt; Table -&gt; Table
+val verticalRules : Rules -&gt; Table -&gt; Table
+val horizontalRules : Rules -&gt; Table -&gt; Table
+
+val headerStyle : HeaderStyle -&gt; Table -&gt; Table
+
+val horizontalAlignment : HorizontalAlignment -&gt; Table -&gt; Table
+val horizontalAlignmentForColumn : string -&gt; HorizontalAlignment -&gt; Table -&gt; Table
+
+val paddingWidth : int -&gt; Table -&gt; Table
+val leftPaddingWidth : int -&gt; Table -&gt; Table
+val rightPaddingWidth : int -&gt; Table -&gt; Table
+
+val verticalChar : char -&gt; Table -&gt; Table
+val horizontalChar : char -&gt; Table -&gt; Table
+val junctionChar : char -&gt; Table -&gt; Table
+
+val onlyColumns : string list -&gt; Table -&gt; Table
+val onlyColumnsByIndex : int list -&gt; Table -&gt; Table
+val onlyColumnsByChoice : (int -&gt; string -&gt; bool) -&gt; Table -&gt; Table
+val allColumns : Table -&gt; Table
+
+val sortBy : string -&gt; Table -&gt; Table
+val sortByDescending : string -&gt; Table -&gt; Table
+val sortByNone Table -&gt; Table
+
+type Style = DefaultStyle | PlainColumns | PlainRows | MsWordFriendly
+val setStyle : Style -&gt; Table -&gt; Table
+</code></pre>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>The MIT License (MIT)</p>
+
+<p>Copyright (c) 2015 Torbjørn Marø</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Fsprettytable maintained by <a href="https://github.com/tormaroe">tormaroe</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
