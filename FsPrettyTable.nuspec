@@ -12,7 +12,7 @@
     <description>@description@</description>
     <releaseNotes>@releaseNotes@</releaseNotes>
     <copyright>Copyright Torbjørn Marø 2015</copyright>    
-    <tags>ASCII table</tags>
+    <tags>ASCII table F# FSharp</tags>
     @dependencies@
     @references@
   </metadata>

@@ -18,7 +18,9 @@ PrettyTable lets you control many aspects of the table, like the width of the co
 
 ## Installation
 
-*TODO: Add NuGet info once it's published*
+Install FsPrettyTable using nuget:
+
+    PM> Install-Package FsPrettyTable
 
 ## Usage
 

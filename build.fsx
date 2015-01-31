@@ -78,14 +78,14 @@ Target "CreatePackage" (fun _ ->
             WorkingDir = packagingDir
             Version = releaseNotes.AssemblyVersion
             ReleaseNotes = toLines releaseNotes.Notes
-            AccessKey = getBuildParamOrDefault "nugetkey" ""
+            //AccessKey = getBuildParamOrDefault "nugetkey" ""
             Files = [("FsPrettyTable.dll", Some @"lib\net45\", None)
                      ("FsPrettyTable.pdb", Some @"lib\net45\", None)
                      ("FsPrettyTable.XML", Some @"lib\net45\", None)
                      ("LICENSE", None, None)
                      ("README.md", None, None)
                      ("ReleaseNotes.md", None, None)]
-            Publish = hasBuildParam "nugetkey" }) 
+            Publish = false }) 
             "FsPrettyTable.nuspec"
 )
 
