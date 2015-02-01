@@ -55,8 +55,6 @@ let private exceptional (x:string) =
 let internal cap (x:string) =
     x.Substring(0, 1).ToUpper() + x.Substring(1).ToLower()
 
-// TODO: Better tokenization (handle braces, exclemation marks etc.)
-
 let private tokenize (x:string) =
     x.Split [|' ';'\n';'\t'|]
 

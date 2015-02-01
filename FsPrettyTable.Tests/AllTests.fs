@@ -248,8 +248,6 @@ let ``Header styles`` ()=
 |    Row 1    | 1234567890 |        abcd        |
 +-------------+------------+--------------------+
 """
-    // TODO: TitleCase
-    // TODO: Capitilize
 
 [<Test>]
 let ``MS Word friendly (no horizontal rules)`` ()=
@@ -368,12 +366,3 @@ let ``Validation error canary test`` ()=
         xs |> should equal   
                 ["-1 in column filter is not a valid column index"
                  "3 in column filter is not a valid column index"]
-
-
-// TODO: Multiline values (and alignment)
-
-// TODO: Add markdown support
-// https://help.github.com/articles/github-flavored-markdown/
-// Need alignment indicators
-
-// TODO: add `top` function

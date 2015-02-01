@@ -8,7 +8,7 @@ let private applyDirection d =
 let private sort projection d rows =
     rows |> List.sortBy projection
          |> applyDirection d
-
+    
 let sortIfNeeded (t:Table) rows =
     let makeSortFieldSelectorBy header =
         let headers = List.head t.FilteredHeaderAndRows

@@ -4,11 +4,11 @@ open System.Runtime.InteropServices
 
 [<assembly: AssemblyProductAttribute("FsPrettyTable")>]
 [<assembly: AssemblyDescriptionAttribute("Represent tabular data in visually appealing ASCII tables using F#")>]
-[<assembly: AssemblyVersionAttribute("0.1.0")>]
-[<assembly: AssemblyFileVersionAttribute("0.1.0")>]
-[<assembly: AssemblyMetadataAttribute("githash","4542dd66acd541110cdf0669d023adf286caa8db")>]
+[<assembly: AssemblyVersionAttribute("0.2.0")>]
+[<assembly: AssemblyFileVersionAttribute("0.2.0")>]
+[<assembly: AssemblyMetadataAttribute("githash","b878e57981caa04c194b3850eb4346140424f22e")>]
 [<assembly: ComVisibleAttribute(false)>]
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] Version = "0.1.0"
+    let [<Literal>] Version = "0.2.0"

@@ -1,4 +1,3 @@
-// include Fake lib
 #r @"FsPrettyTable/packages/FAKE/tools/FakeLib.dll"
 open Fake
 open Fake.Git
@@ -7,7 +6,6 @@ RestorePackages()
 
 let authors = ["Torbjørn Marø"]
 
-// project name and description
 let projectName = "FsPrettyTable"
 let projectDescription = "Represent tabular data in visually appealing ASCII tables using F#"
 let projectSummary = projectDescription // TODO: write a summary
@@ -62,7 +60,6 @@ Target "Test" (fun _ ->
 )
 
 Target "CreatePackage" (fun _ ->
-    // Copy all the package files into a package folder
     CopyFile packagingDir (buildDir @@ "FsPrettyTable.dll")
     CopyFile packagingDir (buildDir @@ "FsPrettyTable.pdb")
     CopyFile packagingDir (buildDir @@ "FsPrettyTable.XML")
@@ -78,7 +75,6 @@ Target "CreatePackage" (fun _ ->
             WorkingDir = packagingDir
             Version = releaseNotes.AssemblyVersion
             ReleaseNotes = toLines releaseNotes.Notes
-            //AccessKey = getBuildParamOrDefault "nugetkey" ""
             Files = [("FsPrettyTable.dll", Some @"lib\net45\", None)
                      ("FsPrettyTable.pdb", Some @"lib\net45\", None)
                      ("FsPrettyTable.XML", Some @"lib\net45\", None)
@@ -91,7 +87,6 @@ Target "CreatePackage" (fun _ ->
 
 Target "Default" DoNothing
 
-// Dependencies
 "Clean"
   ==> "AssemblyInfo"
   ==> "BuildLib"
@@ -100,5 +95,4 @@ Target "Default" DoNothing
   ==> "CreatePackage"
   ==> "Default"
 
-// start build
 RunTargetOrDefault "Default"

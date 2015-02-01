@@ -112,8 +112,6 @@ let sortByNone = sortBy' None
 /// Predefined style sets
 type Style = DefaultStyle | PlainColumns | PlainRows | MsWordFriendly
 
-// TODO: Add Random style, just for fun
-
 /// Override all other visualization options with a predefined style set.
 let setStyle x t =
     // Not nice that I have to keep track of HasHeader like this...
