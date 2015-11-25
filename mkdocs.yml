@@ -1,0 +1,10 @@
+site_name: FSPrettyTable
+pages:
+- Home: index.md
+- Quickstart: quickstart.md
+- Styling: styling.md
+- Filtering: filtering.md
+- Sorting: sorting.md
+- API Reference: api.md
+- License: license.md
+theme: readthedocs
