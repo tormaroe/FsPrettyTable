@@ -16,6 +16,8 @@ It is more or less a rip off of the [PrettyTable Python library](https://code.go
 
 PrettyTable lets you control many aspects of the table, like the width of the column padding, the alignment of text within columns, which characters are used to draw the table border, whether you even want a border, and much more. You can control which subsets of the columns and rows are printed, and you can sort the rows by the value of a particular column.
 
+[![Documentation Status](https://readthedocs.org/projects/fsprettytable/badge/?version=latest)](http://fsprettytable.readthedocs.org/en/latest/?badge=latest)
+
 ## Installation
 
 Install FsPrettyTable using nuget:
